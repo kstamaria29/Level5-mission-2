@@ -1,5 +1,5 @@
 "use strict";
-const express = require("express");
+import express from "express";
 
 const app = express();
 app.use(express.json());
@@ -16,5 +16,3 @@ app.post("/api/christine", (req, res) => {
 app.listen(3000, () => {
   console.log("API running on port 3000");
 });
-
-module.exports = app;
