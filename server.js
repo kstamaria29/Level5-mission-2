@@ -2,9 +2,14 @@
 import express from "express";
 
 const app = express();
-app.use(json());
+app.use(express.json());
 
 // Christine's API =================================
+app.post("/api/christine", (req, res) => {
+  // API 4
+  res.send("hello christine");
+});
+
 // Ben's API =======================================
 // Kenneth's API ===================================
 
