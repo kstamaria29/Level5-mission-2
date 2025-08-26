@@ -45,6 +45,9 @@ function getCarValue(input) {
 
 module.exports = { getCarValue };
 
-app.listen(3000, () => {
-  console.log("API running on port 3000");
-});
+// Start server only if run directly (not during tests)
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log("API running on port 3000");
+  });
+}
