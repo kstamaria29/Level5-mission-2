@@ -25,6 +25,7 @@ function getCarValue(input) {
     return { error: "there is an error" };
   }
 
+
   // Remove non-alphabet characters and make uppercase
   const letters = input.model.toUpperCase().replace(/[^A-Z]/g, "");
 
@@ -51,3 +52,10 @@ if (require.main === module) {
     console.log("API running on port 3000");
   });
 }
+
+app.listen(3000, () => {
+  console.log("API running on port 3000");
+});
+
+module.exports = app;
+
