@@ -11,6 +11,7 @@ app.post("/api/christine", (req, res) => {
 });
 
 // Ben's API =======================================
+
 const calculateQuote = (car_value, risk_rating) => {
   // Notifying of error for incorrect entries
 
@@ -41,7 +42,7 @@ const calculateQuote = (car_value, risk_rating) => {
   // Calculating yearly preimum
   yearly_premium = (car_value * risk_rating) / 100;
 
-  // Converting yearly premium to monthly premium
+   // Converting yearly premium to monthly premium
   yearly_quote = Number(yearly_premium.toFixed(2));
   monthly_quote = Number((yearly_quote / 12).toFixed(2));
 
@@ -55,10 +56,49 @@ app.post("/api/ben", async (req, res) => {
   //API 3
   res.json({});
 });
-// Kenneth's API ===================================
-
-// app.listen(3000, () => {
-//   console.log("API running on port 3000");
-// });
 
 module.exports = { app, calculateQuote };
+
+// Kenneth's API ===================================
+function getCarValue(input) {
+  if (
+    !input ||
+    typeof input.model !== "string" ||
+    typeof input.year !== "number" ||
+    input.model.trim() === "" ||
+    !Number.isInteger(input.year) ||
+    input.year < 0
+  ) {
+    return { error: "there is an error" };
+  }
+
+
+  // Remove non-alphabet characters and make uppercase
+  const letters = input.model.toUpperCase().replace(/[^A-Z]/g, "");
+
+  if (letters.length === 0) {
+    return { error: "there is an error" };
+  }
+
+  // Calculate alphabet sum
+  let sum = 0;
+  for (let char of letters) {
+    sum += char.charCodeAt(0) - 64; // A=65 ASCII = 1, B=66 ASCII = 2, etc..
+  }
+
+  const carValue = sum * 100 + input.year;
+
+  return { car_value: carValue };
+}
+
+module.exports = { getCarValue };
+
+// Start server only if run directly (not during tests)
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log("API running on port 3000");
+  });
+}
+
+
+
