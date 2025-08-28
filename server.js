@@ -5,10 +5,45 @@ const app = express();
 app.use(express.json());
 
 // Christine's API =================================
+
+const discountCalculation = (Age, Experience) => {
+  // Validation
+  if (Age == null || Experience == null) {
+    return { error: "null input", statusCode: 400 };
+  }
+
+  if (
+    typeof Age !== "number" ||
+    typeof Experience !== "number" ||
+    Age < 0 ||
+    Experience < 0
+  ) {
+    return { error: "invalid input value", statusCode: 400 };
+  }
+
+  // Discount Calculation
+  let discount = 0;
+  if (Age >= 25) discount += 5;
+  if (Experience >= 5) discount += 5;
+  if (Age >= 40) discount += 5;
+  if (Experience >= 10) discount += 5;
+  if (discount > 20) discount = 20;
+
+  return { discount, statusCode: 200 };
+};
+
 app.post("/api/christine", (req, res) => {
-  // API 4
-  res.send("hello christine");
+  const { Age, Experience } = req.body;
+  const result = discountCalculation(Age, Experience);
+
+  if (result.error) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+
+  return res.status(result.statusCode).json({ discount: result.discount });
 });
+
+module.exports = { app, discountCalculation };
 
 // Ben's API =======================================
 
@@ -42,7 +77,7 @@ const calculateQuote = (car_value, risk_rating) => {
   // Calculating yearly preimum
   yearly_premium = (car_value * risk_rating) / 100;
 
-   // Converting yearly premium to monthly premium
+  // Converting yearly premium to monthly premium
   yearly_quote = Number(yearly_premium.toFixed(2));
   monthly_quote = Number((yearly_quote / 12).toFixed(2));
 
@@ -72,7 +107,6 @@ function getCarValue(input) {
     return { error: "there is an error" };
   }
 
-
   // Remove non-alphabet characters and make uppercase
   const letters = input.model.toUpperCase().replace(/[^A-Z]/g, "");
 
@@ -100,5 +134,4 @@ if (require.main === module) {
   });
 }
 
-
-
+module.exports = app;
