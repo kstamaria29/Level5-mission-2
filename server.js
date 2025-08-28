@@ -5,9 +5,8 @@ const app = express();
 app.use(express.json());
 
 // Christine's API =================================
-app.post("/api/christine", (req, res) => {
-  const { Age, Experience } = req.body;
 
+const discountCalculation = (Age, Experience) => {
   // Validation
   if (
     typeof Age !== "number" ||
@@ -15,7 +14,7 @@ app.post("/api/christine", (req, res) => {
     Age < 0 ||
     Experience < 0
   ) {
-    return res.status(400).json({ message: "invalid input value" });
+    return { error: "invalid input value", statusCode: 400 };
   }
 
   // Discount Calculation
@@ -26,8 +25,10 @@ app.post("/api/christine", (req, res) => {
   if (Experience >= 10) discount += 5;
   if (discount > 20) discount = 20;
 
-  res.status(200).json({ discount });
-});
+  return { discount, statusCode: 200 };
+};
+
+module.exports = { discountCalculation };
 
 // Ben's API =======================================
 
