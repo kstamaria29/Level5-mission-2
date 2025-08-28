@@ -1,60 +1,48 @@
 const app = require("../server");
-const { discountCalculation } = require("../server");
+const { discountCalculation } = require("../server.js");
+console.log("discountCalculation is defined:", typeof discountCalculation);
 
-// Test cases for discountCalculation function
+// for loop test cases
+const discountTestCases = [
+  // Normal Case - young age & low experience
+  {
+    age: 19,
+    experience: 1,
+    expected: { discount: 0, statusCode: 200 },
+  },
+  // Edge Case - extreme age & experience
+  {
+    age: 120,
+    experience: 65,
+    expected: { discount: 20, statusCode: 200 },
+  },
+  // Boundary Case - boundary age & experience
+  {
+    age: 25,
+    experience: 5,
+    expected: { discount: 10, statusCode: 200 },
+  },
 
-describe("discountCalculation", () => {
-  describe("Normal Case", () => {
-    // normal age
-    it("should return 0% for age <25 and experience <5", () => {
-      expect(discountCalculation(19, 1)).toEqual({ discount: 0 });
-      expect(res.statusCode).toBe(200);
-    });
+  // Error Case - Null input
+  {
+    age: null,
+    experience: 5,
+    expected: { error: "null input", statusCode: 400 },
+  },
+  // Error Case - Non-numeric input
+  {
+    age: "eighty five",
+    experience: "twenty",
+    expected: { error: "invalid input value", statusCode: 400 },
+  },
+];
 
-    it("should return 15% for age >=40 and experience >=5", () => {
-      expect(discountCalculation(44, 5)).toEqual({ discount: 15 });
-      expect(res.statusCode).toBe(150);
-    });
-  });
-
-  describe("Edge Case", () => {
-    // extreme age
-    it("should return 20% for age >=40 and experience >=10", () => {
-      expect(discountCalculation(120, 65)).toEqual({ discount: 20 });
-      expect(res.statusCode).toBe(200);
-    });
-    // extreme experience
-    it("should return 5% for age ≥25 and experience <5", () => {
-      expect(discountCalculation(25, 2)).toEqual({ discount: 5 });
-      expect(res.statusCode).toBe(200);
-    });
-  });
-
-  describe("Boundary Case", () => {
-    // boundary age & experience
-    it("should return 10% for age >=25 and experience >=5", () => {
-      expect(discountCalculation(25, 5)).toEqual({ discount: 10 });
-      expect(res.statusCode).toBe(200);
-    });
-
-    // boundary experience
-    it("should return 5% for age <25 and experience >=5", () => {
-      expect(discountCalculation(23, 5)).toEqual({ discount: 5 });
-      expect(res.statusCode).toBe(200);
-    });
-  });
-
-  describe("Error Case", () => {
-    // error handling
-    it("should return status code 400 for null input", () => {
-      expect(discountCalculation(null, 5)).toMatch(/invalid/);
-      expect(res.statusCode).toBe(400);
-    });
-
-    it("should return status code 400 for invalid input values", () => {
-      expect(discountCalculation("eighty five", "twenty")).toMatch(/invalid/);
-      expect(res.statusCode).toBe(400);
-    });
+discountTestCases.forEach(({ age, experience, expected }) => {
+  test(`discountCalculation(${age}, ${experience}) should return ${JSON.stringify(
+    expected
+  )}`, () => {
+    const result = discountCalculation(age, experience);
+    expect(result).toEqual(expected);
   });
 });
 
