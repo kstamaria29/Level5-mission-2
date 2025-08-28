@@ -34,30 +34,50 @@ const calculateQuote = (car_value, risk_rating) => {
   if (risk_rating < 1 || risk_rating > 5) {
     return { error: "Risk rating must be from 1 to 5" };
   }
-  // CHecks if risk rating is a deminal number
+  // Checks if risk rating is a deminal number
   if (!Number.isInteger(risk_rating)) {
-    return { error: "Risk Rating cannot be a decimal number" };
+    return { error: "Risk rating cannot be a decimal number" };
   }
 
   // Calculating yearly preimum
-  yearly_premium = (car_value * risk_rating) / 100;
+  const yearly_premium = (car_value * risk_rating) / 100;
 
-   // Converting yearly premium to monthly premium
-  yearly_quote = Number(yearly_premium.toFixed(2));
-  monthly_quote = Number((yearly_quote / 12).toFixed(2));
+  // Converting yearly premium to monthly premium
+  const yearly_quote = Number(yearly_premium.toFixed(2));
+  const monthly_quote = Number((yearly_quote / 12).toFixed(2));
 
   // Storing yearly and monthly premiums to the final quote
-  final_quote = { yearly_quote, monthly_quote };
+  const final_quote = { yearly_quote, monthly_quote };
 
   return final_quote;
 };
 
+// API 3 - Convert car value and risk rating to a quote
 app.post("/api/ben", async (req, res) => {
-  //API 3
-  res.json({});
-});
+  // Check if body exists
+  if (!req.body) {
+    return res
+      .status(400)
+      .json({ error: "Please input the values in JSON format" });
+  }
 
-module.exports = { app, calculateQuote };
+  const { car_value, risk_rating } = req.body;
+
+  // Check if required inputs exist
+  if (car_value === undefined || risk_rating === undefined) {
+    return res
+      .status(400)
+      .json({ error: "Both car_value and risk_rating must be provided" });
+  }
+
+  const result = calculateQuote(car_value, risk_rating);
+
+  if (result.error) {
+    res.status(400).json(result); // if there is an invalid input - send error message with status 400
+  } else {
+    res.status(200).json(result); // if inputs are valid - send monthly and yearly quote
+  }
+});
 
 // Kenneth's API ===================================
 function getCarValue(input) {
@@ -71,7 +91,6 @@ function getCarValue(input) {
   ) {
     return { error: "there is an error" };
   }
-
 
   // Remove non-alphabet characters and make uppercase
   const letters = input.model.toUpperCase().replace(/[^A-Z]/g, "");
@@ -91,8 +110,6 @@ function getCarValue(input) {
   return { car_value: carValue };
 }
 
-module.exports = { getCarValue };
-
 // Start server only if run directly (not during tests)
 if (require.main === module) {
   app.listen(3000, () => {
@@ -100,5 +117,4 @@ if (require.main === module) {
   });
 }
 
-
-
+module.exports = { app, calculateQuote, getCarValue };
