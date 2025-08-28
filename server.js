@@ -8,6 +8,10 @@ app.use(express.json());
 
 const discountCalculation = (Age, Experience) => {
   // Validation
+  if (Age == null || Experience == null) {
+    return { error: "null input", statusCode: 400 };
+  }
+
   if (
     typeof Age !== "number" ||
     typeof Experience !== "number" ||
@@ -28,7 +32,18 @@ const discountCalculation = (Age, Experience) => {
   return { discount, statusCode: 200 };
 };
 
-module.exports = { discountCalculation };
+app.post("/api/christine", (req, res) => {
+  const { Age, Experience } = req.body;
+  const result = discountCalculation(Age, Experience);
+
+  if (result.error) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+
+  return res.status(result.statusCode).json({ discount: result.discount });
+});
+
+module.exports = { app, discountCalculation };
 
 // Ben's API =======================================
 
