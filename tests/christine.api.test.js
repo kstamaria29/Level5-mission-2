@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../server.js");
+const { app } = require("../server.js");
 
 // for loop test cases
 const discountTestCases = [

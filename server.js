@@ -43,7 +43,6 @@ app.post("/api/christine", (req, res) => {
   return res.status(result.statusCode).json({ discount: result.discount });
 });
 
-module.exports = { app, discountCalculation };
 
 // Ben's API =======================================
 
@@ -153,5 +152,5 @@ if (require.main === module) {
 }
 
 
-module.exports = { app, calculateQuote, getCarValue };
+module.exports = { app, calculateQuote, getCarValue, discountCalculation };
 
