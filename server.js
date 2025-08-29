@@ -5,10 +5,40 @@ const app = express();
 app.use(express.json());
 
 // Christine's API =================================
+
+const discountCalculation = (Age, Experience) => {
+  // Validation
+  if (Age == null || Experience == null) {
+    return { error: "null input", statusCode: 400 };
+  }
+
+  if (typeof Age !== "number" || typeof Experience !== "number" || Age < 0 || Experience < 0) {
+    return { error: "invalid input value", statusCode: 400 };
+  }
+
+  // Discount Calculation
+  let discount = 0;
+  if (Age >= 25) discount += 5;
+  if (Experience >= 5) discount += 5;
+  if (Age >= 40) discount += 5;
+  if (Experience >= 10) discount += 5;
+  if (discount > 20) discount = 20;
+
+  return { discount, statusCode: 200 };
+};
+
 app.post("/api/christine", (req, res) => {
-  // API 4
-  res.send("hello christine");
+  const { Age, Experience } = req.body;
+  const result = discountCalculation(Age, Experience);
+
+  if (result.error) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+
+  return res.status(result.statusCode).json({ discount: result.discount });
 });
+
+module.exports = { app, discountCalculation };
 
 // Ben's API =======================================
 
@@ -34,30 +64,46 @@ const calculateQuote = (car_value, risk_rating) => {
   if (risk_rating < 1 || risk_rating > 5) {
     return { error: "Risk rating must be from 1 to 5" };
   }
-  // CHecks if risk rating is a deminal number
+  // Checks if risk rating is a deminal number
   if (!Number.isInteger(risk_rating)) {
-    return { error: "Risk Rating cannot be a decimal number" };
+    return { error: "Risk rating cannot be a decimal number" };
   }
 
   // Calculating yearly preimum
-  yearly_premium = (car_value * risk_rating) / 100;
+  const yearly_premium = (car_value * risk_rating) / 100;
 
   // Converting yearly premium to monthly premium
-  yearly_quote = Number(yearly_premium.toFixed(2));
-  monthly_quote = Number((yearly_quote / 12).toFixed(2));
+  const yearly_quote = Number(yearly_premium.toFixed(2));
+  const monthly_quote = Number((yearly_quote / 12).toFixed(2));
 
   // Storing yearly and monthly premiums to the final quote
-  final_quote = { yearly_quote, monthly_quote };
+  const final_quote = { yearly_quote, monthly_quote };
 
   return final_quote;
 };
 
+// API 3 - Convert car value and risk rating to a quote
 app.post("/api/ben", async (req, res) => {
-  //API 3
-  res.json({});
-});
+  // Check if body exists
+  if (!req.body) {
+    return res.status(400).json({ error: "Please input the values in JSON format" });
+  }
 
-module.exports = { app, calculateQuote };
+  const { car_value, risk_rating } = req.body;
+
+  // Check if required inputs exist
+  if (car_value === undefined || risk_rating === undefined) {
+    return res.status(400).json({ error: "Both car_value and risk_rating must be provided" });
+  }
+
+  const result = calculateQuote(car_value, risk_rating);
+
+  if (result.error) {
+    res.status(400).json(result); // if there is an invalid input - send error message with status 400
+  } else {
+    res.status(200).json(result); // if inputs are valid - send monthly and yearly quote
+  }
+});
 
 // Kenneth's API ===================================
 function getCarValue(input) {
@@ -94,11 +140,11 @@ app.post("/api/kenneth", (req, res) => {
   res.json(result);
 });
 
-module.exports = { app, getCarValue };
-
 // Start server only if run directly (not during tests)
 if (require.main === module) {
   app.listen(3000, () => {
     console.log("API running on port 3000");
   });
 }
+
+module.exports = { app, calculateQuote, getCarValue };
