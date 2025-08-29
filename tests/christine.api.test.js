@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../server.js");
+const { app } = require("../server.js");
 
 // for loop test cases
 const discountTestCases = [
@@ -45,11 +45,7 @@ discountTestCases.forEach(({ testCase, input, expectedOutput }) => {
 
     expect(response.status).toBe(expectedOutput.statusCode);
 
-    expect(response.body).toEqual(
-      expectedOutput.error
-        ? { error: expectedOutput.error }
-        : { discount: expectedOutput.discount }
-    );
+    expect(response.body).toEqual(expectedOutput.error ? { error: expectedOutput.error } : { discount: expectedOutput.discount });
   });
 });
 
