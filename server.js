@@ -12,7 +12,12 @@ const discountCalculation = (Age, Experience) => {
     return { error: "null input", statusCode: 400 };
   }
 
-  if (typeof Age !== "number" || typeof Experience !== "number" || Age < 0 || Experience < 0) {
+  if (
+    typeof Age !== "number" ||
+    typeof Experience !== "number" ||
+    Age < 0 ||
+    Experience < 0
+  ) {
     return { error: "invalid input value", statusCode: 400 };
   }
 
@@ -37,7 +42,6 @@ app.post("/api/christine", (req, res) => {
 
   return res.status(result.statusCode).json({ discount: result.discount });
 });
-
 
 // Ben's API =======================================
 
@@ -85,14 +89,18 @@ const calculateQuote = (car_value, risk_rating) => {
 app.post("/api/ben", async (req, res) => {
   // Check if body exists
   if (!req.body) {
-    return res.status(400).json({ error: "Please input the values in JSON format" });
+    return res
+      .status(400)
+      .json({ error: "Please input the values in JSON format" });
   }
 
   const { car_value, risk_rating } = req.body;
 
   // Check if required inputs exist
   if (car_value === undefined || risk_rating === undefined) {
-    return res.status(400).json({ error: "Both car_value and risk_rating must be provided" });
+    return res
+      .status(400)
+      .json({ error: "Both car_value and risk_rating must be provided" });
   }
 
   const result = calculateQuote(car_value, risk_rating);
@@ -140,13 +148,12 @@ app.post("/api/kenneth", (req, res) => {
 });
 
 // Start server only if run directly (not during tests)
+const PORT = process.env.PORT || 3000;
+
 if (require.main === module) {
-  app.listen(3000, () => {
-    console.log("API running on port 3000");
+  app.listen(PORT, () => {
+    console.log(`API running on port ${PORT}`);
   });
 }
 
-
 module.exports = { app, calculateQuote, getCarValue, discountCalculation };
-
-
