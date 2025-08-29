@@ -45,11 +45,7 @@ discountTestCases.forEach(({ testCase, input, expectedOutput }) => {
 
     expect(response.status).toBe(expectedOutput.statusCode);
 
-    expect(response.body).toEqual(
-      expectedOutput.error
-        ? { error: expectedOutput.error }
-        : { discount: expectedOutput.discount }
-    );
+    expect(response.body).toEqual(expectedOutput.error ? { error: expectedOutput.error } : { discount: expectedOutput.discount });
   });
 });
 

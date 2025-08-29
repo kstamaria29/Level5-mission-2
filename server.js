@@ -12,12 +12,7 @@ const discountCalculation = (Age, Experience) => {
     return { error: "null input", statusCode: 400 };
   }
 
-  if (
-    typeof Age !== "number" ||
-    typeof Experience !== "number" ||
-    Age < 0 ||
-    Experience < 0
-  ) {
+  if (typeof Age !== "number" || typeof Experience !== "number" || Age < 0 || Experience < 0) {
     return { error: "invalid input value", statusCode: 400 };
   }
 
@@ -90,18 +85,14 @@ const calculateQuote = (car_value, risk_rating) => {
 app.post("/api/ben", async (req, res) => {
   // Check if body exists
   if (!req.body) {
-    return res
-      .status(400)
-      .json({ error: "Please input the values in JSON format" });
+    return res.status(400).json({ error: "Please input the values in JSON format" });
   }
 
   const { car_value, risk_rating } = req.body;
 
   // Check if required inputs exist
   if (car_value === undefined || risk_rating === undefined) {
-    return res
-      .status(400)
-      .json({ error: "Both car_value and risk_rating must be provided" });
+    return res.status(400).json({ error: "Both car_value and risk_rating must be provided" });
   }
 
   const result = calculateQuote(car_value, risk_rating);
@@ -139,10 +130,14 @@ function getCarValue(input) {
     sum += char.charCodeAt(0) - 64; // A=65 ASCII = 1, B=66 ASCII = 2, etc..
   }
 
-  const carValue = sum * 100 + input.year;
-
-  return { car_value: carValue };
+  return { car_value: sum * 100 + input.year };
 }
+
+// Route to access Kenneth's API
+app.post("/api/kenneth", (req, res) => {
+  const result = getCarValue(req.body);
+  res.json(result);
+});
 
 // Start server only if run directly (not during tests)
 if (require.main === module) {
@@ -153,4 +148,5 @@ if (require.main === module) {
 
 
 module.exports = { app, calculateQuote, getCarValue, discountCalculation };
+
 
