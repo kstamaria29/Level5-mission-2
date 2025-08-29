@@ -42,7 +42,7 @@ const calculateQuote = (car_value, risk_rating) => {
   // Calculating yearly preimum
   yearly_premium = (car_value * risk_rating) / 100;
 
-   // Converting yearly premium to monthly premium
+  // Converting yearly premium to monthly premium
   yearly_quote = Number(yearly_premium.toFixed(2));
   monthly_quote = Number((yearly_quote / 12).toFixed(2));
 
@@ -72,7 +72,6 @@ function getCarValue(input) {
     return { error: "there is an error" };
   }
 
-
   // Remove non-alphabet characters and make uppercase
   const letters = input.model.toUpperCase().replace(/[^A-Z]/g, "");
 
@@ -86,12 +85,16 @@ function getCarValue(input) {
     sum += char.charCodeAt(0) - 64; // A=65 ASCII = 1, B=66 ASCII = 2, etc..
   }
 
-  const carValue = sum * 100 + input.year;
-
-  return { car_value: carValue };
+  return { car_value: sum * 100 + input.year };
 }
 
-module.exports = { getCarValue };
+// Route to access Kenneth's API
+app.post("/api/kenneth", (req, res) => {
+  const result = getCarValue(req.body);
+  res.json(result);
+});
+
+module.exports = { app, getCarValue };
 
 // Start server only if run directly (not during tests)
 if (require.main === module) {
@@ -99,6 +102,3 @@ if (require.main === module) {
     console.log("API running on port 3000");
   });
 }
-
-
-
